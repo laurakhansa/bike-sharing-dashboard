@@ -34,7 +34,9 @@ st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-* {{ font-family: 'Inter', sans-serif !important; }}
+html, body, [class*="css"]  {{
+    font-family: 'Inter', sans-serif !important;
+}}
 
 .stApp {{ background-color: {NAVY}; }}
 .main .block-container {{ padding: 2rem 2.5rem; }}
@@ -90,6 +92,12 @@ st.markdown(f"""
 [data-testid="stDateInput"] > div {{
     background-color: {NAVY_LIGHT} !important;
     border-color: {BORDER} !important;
+}}
+
+/* Perbaikan warna tag multiselect agar selaras dengan tema navy */
+[data-baseweb="tag"] {{
+    background-color: {ACCENT} !important;
+    color: white !important;
 }}
 
 /* Divider */
@@ -367,7 +375,6 @@ with tab2:
         s_agg["order"] = s_agg["season_label"].map(order_map)
         s_agg = s_agg.sort_values("order")
 
-        # Highlight highest bar
         colors_bar = [ACCENT if i == s_agg["avg"].argmax() else NAVY_LIGHT
                       for i in range(len(s_agg))]
 
@@ -489,7 +496,7 @@ with tab3:
         x = np.arange(len(d_agg))
         w = 0.38
         fig8, ax8 = plt.subplots(figsize=(6, 4.5))
-        ax8.bar(x - w/2, d_agg["casual"],     w, label="Casual",
+        ax8.bar(x - w/2, d_agg["casual"],    w, label="Casual",
                 color=NAVY_LIGHT, edgecolor=CHART_BG)
         ax8.bar(x + w/2, d_agg["registered"], w, label="Registered",
                 color=ACCENT, edgecolor=CHART_BG)
