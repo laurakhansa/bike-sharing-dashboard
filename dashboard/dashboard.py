@@ -4,9 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# ─────────────────────────────────────────
-#  PAGE CONFIG
-# ─────────────────────────────────────────
 st.set_page_config(
     page_title="Bike Sharing Dashboard",
     page_icon="assets/bike.png" if False else None,
@@ -14,127 +11,143 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ─────────────────────────────────────────
-#  COLOR PALETTE  (navy + white/grey)
-# ─────────────────────────────────────────
 NAVY       = "#0d1b2a"
 NAVY_MID   = "#1b2f4b"
 NAVY_LIGHT = "#243c5c"
-ACCENT     = "#2563eb"        # single blue accent
-ACCENT2    = "#3b82f6"        # lighter blue
-TEXT_MAIN  = "#f8fafc"
-TEXT_SUB   = "#94a3b8"
+ACCENT     = "#3b82f6"        
+TEXT_MAIN  = "#ffffff"        
+TEXT_SUB   = "#cbd5e1"      
 BORDER     = "#1e3a5f"
 CHART_BG   = "#111e2e"
 
-# ─────────────────────────────────────────
-#  GLOBAL CSS
-# ─────────────────────────────────────────
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-html, body, [class*="css"]  {{
+html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif !important;
 }}
 
-.stApp {{ background-color: {NAVY}; }}
+/* Main App Container */
+.stApp {{ 
+    background-color: {NAVY} !important; 
+    color: {TEXT_MAIN} !important;
+}}
 .main .block-container {{ padding: 2rem 2.5rem; }}
 
 /* Sidebar */
 [data-testid="stSidebar"] {{
-    background-color: {NAVY_MID};
-    border-right: 1px solid {BORDER};
+    background-color: {NAVY_MID} !important;
+    border-right: 1px solid {BORDER} !important;
 }}
-[data-testid="stSidebar"] * {{ color: {TEXT_MAIN} !important; }}
+[data-testid="stSidebar"] * {{ 
+    color: {TEXT_MAIN} !important; 
+}}
 
-/* Metric cards */
+/* Metric Cards & Full Text Contrast Fix */
 [data-testid="metric-container"] {{
-    background-color: {NAVY_MID};
-    border: 1px solid {BORDER};
+    background-color: {NAVY_MID} !important;
+    border: 1px solid {BORDER} !important;
     border-radius: 8px;
     padding: 1.1rem 1.4rem;
+    opacity: 1 !important;
 }}
-[data-testid="metric-container"] label {{
+[data-testid="metric-container"] label,
+[data-testid="stMetricLabel"],
+[data-testid="metric-container"] [data-testid="stMetricLabel"] div,
+[data-testid="metric-container"] p {{
     color: {TEXT_SUB} !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
     text-transform: uppercase;
     letter-spacing: 0.6px;
+    opacity: 1 !important;
 }}
-[data-testid="metric-container"] [data-testid="metric-value"] {{
+[data-testid="metric-container"] [data-testid="stMetricValue"],
+[data-testid="metric-container"] [data-testid="metric-value"],
+[data-testid="stMetricValue"] div {{
     color: {TEXT_MAIN} !important;
-    font-size: 1.7rem !important;
+    font-size: 1.8rem !important;
     font-weight: 700 !important;
+    opacity: 1 !important;
 }}
 
-/* Tabs */
+/* Modern & Sleek Tabs Styling */
 .stTabs [data-baseweb="tab-list"] {{
-    background-color: {NAVY_MID};
-    border-radius: 6px;
-    border: 1px solid {BORDER};
-    gap: 4px;
-    padding: 4px;
+    background-color: transparent !important;
+    border-bottom: 2px solid {BORDER} !important;
+    gap: 16px !important;
+    padding: 0px !important;
 }}
 .stTabs [data-baseweb="tab"] {{
-    border-radius: 4px;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
     color: {TEXT_SUB} !important;
-    font-weight: 500;
-    font-size: 0.85rem;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    padding: 10px 16px !important;
+    transition: all 0.2s ease-in-out;
+}}
+.stTabs [data-baseweb="tab"]:hover {{
+    color: {TEXT_MAIN} !important;
 }}
 .stTabs [aria-selected="true"] {{
-    background-color: {ACCENT} !important;
-    color: white !important;
+    background-color: transparent !important;
+    color: {TEXT_MAIN} !important;
+    border-bottom: 3px solid {ACCENT} !important;
 }}
 
-/* Multiselect & input */
+/* Multiselect & Input Boxes Fix */
 [data-testid="stMultiSelect"] > div,
-[data-testid="stDateInput"] > div {{
-    background-color: {NAVY_LIGHT} !important;
-    border-color: {BORDER} !important;
+[data-testid="stDateInput"] input {{
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
 }}
 
-/* Perbaikan warna tag multiselect agar selaras dengan tema navy */
+/* Custom Multiselect Badges */
 [data-baseweb="tag"] {{
-    background-color: {ACCENT} !important;
-    color: white !important;
+    background-color: {NAVY_LIGHT} !important;
+    border: 1px solid {BORDER} !important;
+    border-radius: 4px !important;
+}}
+[data-baseweb="tag"] * {{
+    color: {TEXT_MAIN} !important;
 }}
 
 /* Divider */
 hr {{ border-color: {BORDER} !important; margin: 1.2rem 0; }}
 
-/* Section title */
+/* Titles & Subtitles */
 .sec-title {{
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     color: {TEXT_MAIN};
-    margin-bottom: 0.15rem;
-    letter-spacing: 0.2px;
+    margin-bottom: 0.2rem;
 }}
 .sec-sub {{
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     color: {TEXT_SUB};
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
 }}
 
 /* Insight box */
 .insight {{
     background-color: {NAVY_LIGHT};
-    border-left: 3px solid {ACCENT};
+    border-left: 4px solid {ACCENT};
     border-radius: 0 6px 6px 0;
     padding: 12px 16px;
-    margin-top: 12px;
+    margin-top: 14px;
     color: {TEXT_SUB};
-    font-size: 0.82rem;
-    line-height: 1.65;
+    font-size: 0.85rem;
+    line-height: 1.6;
 }}
 .insight b {{ color: {TEXT_MAIN}; }}
 </style>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────
-#  MATPLOTLIB THEME
-# ─────────────────────────────────────────
 plt.rcParams.update({
     "figure.facecolor":  CHART_BG,
     "axes.facecolor":    CHART_BG,
@@ -159,9 +172,6 @@ plt.rcParams.update({
     "font.family":       "DejaVu Sans",
 })
 
-# ─────────────────────────────────────────
-#  LOAD DATA
-# ─────────────────────────────────────────
 @st.cache_data
 def load_data():
     df = pd.read_csv("dashboard/main_data.csv")
@@ -177,13 +187,10 @@ def load_data():
 
 df_raw = load_data()
 
-# ─────────────────────────────────────────
-#  SIDEBAR
-# ─────────────────────────────────────────
 with st.sidebar:
     st.markdown("### Bike Sharing Dashboard")
     st.markdown(
-        f"<span style='color:{TEXT_SUB};font-size:0.78rem;'>Capital Bikeshare · 2011–2012</span>",
+        f"<span style='color:{TEXT_SUB};font-size:0.8rem;'>Capital Bikeshare · 2011–2012</span>",
         unsafe_allow_html=True,
     )
     st.markdown("---")
@@ -209,9 +216,6 @@ with st.sidebar:
 
     day_type = st.radio("Day type", ["All", "Workday", "Holiday"], index=0)
 
-# ─────────────────────────────────────────
-#  FILTER
-# ─────────────────────────────────────────
 if isinstance(date_range, (list, tuple)) and len(date_range) == 2:
     s_date, e_date = date_range
 else:
@@ -235,23 +239,17 @@ if df.empty:
     st.warning("No data matches the selected filters.")
     st.stop()
 
-# ─────────────────────────────────────────
-#  HEADER
-# ─────────────────────────────────────────
 st.markdown(f"""
-<div style="padding: 1.5rem 0 1rem 0; border-bottom: 1px solid {BORDER}; margin-bottom: 1.5rem;">
-    <h1 style="color:{TEXT_MAIN}; font-size:1.6rem; font-weight:700; margin:0; letter-spacing:-0.3px;">
+<div style="padding: 1rem 0 0.8rem 0; border-bottom: 1px solid {BORDER}; margin-bottom: 1.5rem;">
+    <h1 style="color:{TEXT_MAIN}; font-size:1.75rem; font-weight:700; margin:0; letter-spacing:-0.3px;">
         Bike Sharing Dashboard
     </h1>
-    <p style="color:{TEXT_SUB}; font-size:0.82rem; margin:0.3rem 0 0 0;">
+    <p style="color:{TEXT_SUB}; font-size:0.85rem; margin:0.3rem 0 0 0;">
         Capital Bikeshare · Washington D.C. · January 2011 – December 2012
     </p>
 </div>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────
-#  KPI
-# ─────────────────────────────────────────
 total    = int(df["cnt"].sum())
 avg_day  = int(df["cnt"].mean())
 casual   = int(df["casual"].sum())
@@ -267,9 +265,6 @@ c5.metric("Peak Day",         f"{peak_val:,}")
 
 st.markdown("---")
 
-# ─────────────────────────────────────────
-#  TABS
-# ─────────────────────────────────────────
 tab1, tab2, tab3, tab4 = st.tabs([
     "Time Trend",
     "Season & Weather",
@@ -277,17 +272,13 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "Environmental Factors",
 ])
 
-# ──────────────────────────────
-#  TAB 1 — Time Trend
-# ──────────────────────────────
 with tab1:
     st.markdown('<p class="sec-title">Business Question 1 — How has bike rental demand changed over time?</p>', unsafe_allow_html=True)
     st.markdown('<p class="sec-sub">Daily rental volume with 30-day moving average, monthly breakdown, and year-over-year comparison.</p>', unsafe_allow_html=True)
 
-    # Daily trend
     fig, ax = plt.subplots(figsize=(12, 3.8))
-    ax.fill_between(df["dteday"], df["cnt"], alpha=0.12, color=ACCENT2)
-    ax.plot(df["dteday"], df["cnt"], color=ACCENT2, linewidth=1, alpha=0.7)
+    ax.fill_between(df["dteday"], df["cnt"], alpha=0.15, color=ACCENT)
+    ax.plot(df["dteday"], df["cnt"], color=ACCENT, linewidth=1, alpha=0.7)
     if len(df) >= 30:
         roll = df.set_index("dteday")["cnt"].rolling(30).mean()
         ax.plot(roll.index, roll.values, color=TEXT_MAIN, linewidth=1.8,
@@ -333,7 +324,7 @@ with tab1:
                 .mean().reset_index().sort_values("month_order")
             )
             fig3, ax3 = plt.subplots(figsize=(6, 3.8))
-            colors_yr = [ACCENT2, TEXT_MAIN]
+            colors_yr = [ACCENT, TEXT_MAIN]
             for i, yr in enumerate(["2011", "2012"]):
                 sub = yearly[yearly["year_label"] == yr]
                 if not sub.empty:
@@ -356,10 +347,6 @@ with tab1:
     The 30-day moving average clearly shows a seasonal growth pattern.
     </div>""", unsafe_allow_html=True)
 
-
-# ──────────────────────────────
-#  TAB 2 — Season & Weather
-# ──────────────────────────────
 with tab2:
     st.markdown('<p class="sec-title">Business Question 2 — How do season and weather conditions affect rental demand?</p>', unsafe_allow_html=True)
     st.markdown('<p class="sec-sub">Average daily rentals segmented by season, weather condition, and their interaction.</p>', unsafe_allow_html=True)
@@ -424,7 +411,6 @@ with tab2:
         st.pyplot(fig5)
         plt.close(fig5)
 
-    # Heatmap
     st.markdown(f"<p class='sec-title' style='margin-top:1rem;'>Season × Weather Heatmap</p>", unsafe_allow_html=True)
     pivot = df.pivot_table(
         values="cnt", index="weathersit_label",
@@ -453,10 +439,6 @@ with tab2:
     Rain or snow can reduce demand by up to 60% compared to clear days.
     </div>""", unsafe_allow_html=True)
 
-
-# ──────────────────────────────
-#  TAB 3 — User Segments
-# ──────────────────────────────
 with tab3:
     st.markdown('<p class="sec-title">Business Question 3 — How do casual and registered users differ in behavior?</p>', unsafe_allow_html=True)
     st.markdown('<p class="sec-sub">Usage patterns across days of the week and months for each user segment.</p>', unsafe_allow_html=True)
@@ -511,7 +493,6 @@ with tab3:
         st.pyplot(fig8)
         plt.close(fig8)
 
-    # Stacked area
     st.markdown(f"<p class='sec-title' style='margin-top:1rem;'>Monthly Composition: Casual vs Registered</p>", unsafe_allow_html=True)
     m_user = (
         df.groupby(["month_order","month_name"])[["casual","registered"]]
@@ -541,10 +522,6 @@ with tab3:
     Targeting weekend casual users with membership promotions could increase long-term registered user base.
     </div>""", unsafe_allow_html=True)
 
-
-# ──────────────────────────────
-#  TAB 4 — Environmental
-# ──────────────────────────────
 with tab4:
     st.markdown('<p class="sec-title">Advanced Analysis — Impact of Environmental Factors</p>', unsafe_allow_html=True)
     st.markdown('<p class="sec-sub">Correlation between temperature, humidity, wind speed, and rental volume.</p>', unsafe_allow_html=True)
@@ -554,7 +531,7 @@ with tab4:
     with col_g:
         fig10, ax10 = plt.subplots(figsize=(6, 4.5))
         ax10.scatter(df["temp_c"], df["cnt"],
-                     alpha=0.3, s=14, color=ACCENT2)
+                     alpha=0.3, s=14, color=ACCENT)
         z = np.polyfit(df["temp_c"], df["cnt"], 1)
         p = np.poly1d(z)
         xl = np.linspace(df["temp_c"].min(), df["temp_c"].max(), 200)
@@ -572,7 +549,7 @@ with tab4:
     with col_h:
         fig11, ax11 = plt.subplots(figsize=(6, 4.5))
         ax11.scatter(df["hum_pct"], df["cnt"],
-                     alpha=0.3, s=14, color=ACCENT2)
+                     alpha=0.3, s=14, color=ACCENT)
         z2 = np.polyfit(df["hum_pct"], df["cnt"], 1)
         p2 = np.poly1d(z2)
         xl2 = np.linspace(df["hum_pct"].min(), df["hum_pct"].max(), 200)
@@ -587,7 +564,6 @@ with tab4:
         st.pyplot(fig11)
         plt.close(fig11)
 
-    # Correlation heatmap
     st.markdown(f"<p class='sec-title' style='margin-top:1rem;'>Correlation Matrix</p>", unsafe_allow_html=True)
     corr_rename = {
         "temp_c": "Temp (°C)", "hum_pct": "Humidity (%)",
@@ -618,9 +594,6 @@ with tab4:
     Fleet availability can be optimized by integrating daily weather forecasts.
     </div>""", unsafe_allow_html=True)
 
-# ─────────────────────────────────────────
-#  FOOTER
-# ─────────────────────────────────────────
 st.markdown(f"""
 <div style="border-top:1px solid {BORDER}; margin-top:2rem; padding-top:1rem;
      text-align:center; color:{TEXT_SUB}; font-size:0.76rem;">
